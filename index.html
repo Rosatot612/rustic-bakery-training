@@ -838,6 +838,38 @@ body {
   .progress-bar-wrap { display: none; }
   .admin-stats-row { grid-template-columns: repeat(2, 1fr); }
 }
+
+.lang-toggle {
+  display: inline-flex;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3px;
+  gap: 2px;
+}
+.lang-btn {
+  background: transparent;
+  border: none;
+  border-radius: 16px;
+  padding: .35rem .9rem;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: 'Barlow', sans-serif;
+  transition: .15s;
+}
+.lang-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+.lang-btn:not(.active):hover { color: var(--text); }
+
+.header-lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
 </style>
 </head>
 <body>
@@ -866,42 +898,46 @@ body {
         <path d="M157.633 13.3881L155.833 0L145.287 8.27233L157.633 13.3881Z" fill="#E22027"/>
       </svg>
       <div>
-        <span class="login-client-badge">🏭 Rustic Bakery · Line Lead Training</span>
+        <span class="login-client-badge" id="login-badge-text">🏭 Rustic Bakery · Line Lead Training</span>
+      </div>
+      <div class="lang-toggle" id="login-lang-toggle" style="margin-top:1.25rem;">
+        <button class="lang-btn active" id="lang-btn-en" onclick="setLoginLang('en')">English</button>
+        <button class="lang-btn" id="lang-btn-es" onclick="setLoginLang('es')">Español</button>
       </div>
     </div>
 
     <div class="login-card">
-      <div class="login-heading">Welcome, Line Lead</div>
-      <div class="login-sub">Enter your information to begin training. Your progress will be tracked and reported to your site manager.</div>
+      <div class="login-heading" id="login-heading-text">Welcome, Line Lead</div>
+      <div class="login-sub" id="login-sub-text">Enter your information to begin training. Your progress will be tracked and reported to your site manager.</div>
 
       <div class="status-msg error" id="login-error">Please fill in all fields to continue.</div>
 
       <div class="form-group">
-        <label class="form-label" for="input-name">Full Name</label>
+        <label class="form-label" id="label-name" for="input-name">Full Name</label>
         <input class="form-input" type="text" id="input-name" placeholder="e.g. Maria Hernandez" autocomplete="name" />
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="input-title">Job Title</label>
+        <label class="form-label" id="label-title" for="input-title">Job Title</label>
         <input class="form-input" type="text" id="input-title" placeholder="e.g. Line Lead" autocomplete="organization-title" />
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="input-shift">Shift</label>
+        <label class="form-label" id="label-shift" for="input-shift">Shift</label>
         <select class="form-select" id="input-shift">
-          <option value="">Select your shift…</option>
-          <option value="1st Shift">1st Shift</option>
-          <option value="2nd Shift">2nd Shift</option>
-          <option value="3rd Shift">3rd Shift</option>
+          <option value="" id="opt-select-shift">Select your shift…</option>
+          <option value="1st Shift" id="opt-shift1">1st Shift</option>
+          <option value="2nd Shift" id="opt-shift2">2nd Shift</option>
+          <option value="3rd Shift" id="opt-shift3">3rd Shift</option>
         </select>
       </div>
 
-      <button class="login-btn" onclick="startTraining()">Begin Training →</button>
+      <button class="login-btn" id="begin-btn" onclick="startTraining()">Begin Training →</button>
     </div>
 
     <div class="login-footer">
       © 2026 Synovate · Synergetics Installations Worldwide, Inc.<br>
-      Questions? Contact <a href="mailto:rosatot@synergeticsww.com" style="color:var(--accent);text-decoration:none;">rosatot@synergeticsww.com</a>
+      <span id="footer-questions-text">Questions? Contact</span> <a href="mailto:rosatot@synergeticsww.com" style="color:var(--accent);text-decoration:none;">rosatot@synergeticsww.com</a>
     </div>
   </div>
 </div>
@@ -924,13 +960,19 @@ body {
         </svg>
       </div>
       <div class="header-divider"></div>
-      <div class="header-client">Rustic Bakery · Line Lead Training</div>
+      <div class="header-client" id="header-client-text">Rustic Bakery · Line Lead Training</div>
     </div>
 
     <div class="header-right">
+      <div class="header-lang-toggle">
+        <div class="lang-toggle">
+          <button class="lang-btn" id="header-lang-btn-en" onclick="setSessionLang('en')">EN</button>
+          <button class="lang-btn" id="header-lang-btn-es" onclick="setSessionLang('es')">ES</button>
+        </div>
+      </div>
       <div class="progress-bar-wrap">
         <div class="progress-label">
-          <span>Training Progress</span>
+          <span id="progress-label-text">Training Progress</span>
           <span id="header-progress-pct">0%</span>
         </div>
         <div class="progress-track">
@@ -944,7 +986,7 @@ body {
           <div class="user-shift" id="header-user-shift">—</div>
         </div>
       </div>
-      <button class="logout-btn" onclick="logout()">Sign Out</button>
+      <button class="logout-btn" id="signout-btn" onclick="logout()">Sign Out</button>
     </div>
   </div>
 
@@ -953,11 +995,11 @@ body {
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-      <div class="sidebar-heading">Training Modules</div>
+      <div class="sidebar-heading" id="sidebar-heading-text">Training Modules</div>
       <div id="sidebar-modules"></div>
       <div class="sidebar-completion" id="sidebar-completion">
-        <div class="completion-label">✓ Training Complete</div>
-        <div class="completion-sub">All modules finished. Your completion has been recorded.</div>
+        <div class="completion-label" id="sidebar-completion-label">✓ Training Complete</div>
+        <div class="completion-sub" id="sidebar-completion-sub">All modules finished. Your completion has been recorded.</div>
       </div>
     </div>
 
@@ -975,32 +1017,32 @@ body {
 <div id="screen-complete" class="screen">
   <div>
     <div class="complete-icon">✓</div>
-    <div class="complete-title">Training Complete</div>
+    <div class="complete-title" id="complete-title-text">Training Complete</div>
     <div class="complete-sub" id="complete-sub">You've completed all five Synovate training modules. Your results have been recorded.</div>
 
     <div class="completion-card">
       <div class="completion-row">
-        <span class="completion-row-label">Name</span>
+        <span class="completion-row-label" id="summary-label-name">Name</span>
         <span class="completion-row-value" id="summary-name">—</span>
       </div>
       <div class="completion-row">
-        <span class="completion-row-label">Title</span>
+        <span class="completion-row-label" id="summary-label-title">Title</span>
         <span class="completion-row-value" id="summary-title">—</span>
       </div>
       <div class="completion-row">
-        <span class="completion-row-label">Shift</span>
+        <span class="completion-row-label" id="summary-label-shift">Shift</span>
         <span class="completion-row-value" id="summary-shift">—</span>
       </div>
       <div class="completion-row">
-        <span class="completion-row-label">Modules Completed</span>
+        <span class="completion-row-label" id="summary-label-modules">Modules Completed</span>
         <span class="completion-row-value green" id="summary-modules">5 / 5</span>
       </div>
       <div class="completion-row">
-        <span class="completion-row-label">Date</span>
+        <span class="completion-row-label" id="summary-label-date">Date</span>
         <span class="completion-row-value" id="summary-date">—</span>
       </div>
     </div>
-    <p style="font-size:13px;color:var(--muted);text-align:center;">Return to the floor. See your supervisor if you have questions.</p>
+    <p style="font-size:13px;color:var(--muted);text-align:center;" id="return-floor-text">Return to the floor. See your supervisor if you have questions.</p>
   </div>
 </div>
 
@@ -1062,81 +1104,230 @@ body {
 // ══════════════════════════════════════════════════════
 // DATA — Module Definitions
 // ══════════════════════════════════════════════════════
+var UI_TEXT = {
+  en: {
+    loginBadge: '🏭 Rustic Bakery · Line Lead Training',
+    loginHeading: 'Welcome, Line Lead',
+    loginSub: "Enter your information to begin training. Your progress will be tracked and reported to your site manager.",
+    loginError: 'Please fill in all fields to continue.',
+    labelName: 'Full Name',
+    placeholderName: 'e.g. Maria Hernandez',
+    labelTitle: 'Job Title',
+    placeholderTitle: 'e.g. Line Lead',
+    labelShift: 'Shift',
+    selectShift: 'Select your shift…',
+    shift1: '1st Shift',
+    shift2: '2nd Shift',
+    shift3: '3rd Shift',
+    beginBtn: 'Begin Training →',
+    footerQuestions: 'Questions? Contact',
+    headerClient: 'Rustic Bakery · Line Lead Training',
+    progressLabel: 'Training Progress',
+    signOut: 'Sign Out',
+    sidebarHeading: 'Training Modules',
+    completionLabel: '✓ Training Complete',
+    completionSub: 'All modules finished. Your completion has been recorded.',
+    moduleOf: 'Module',
+    ofWord: 'of',
+    whatYoullLearn: "What You'll Learn",
+    markComplete: 'Mark as Complete →',
+    moduleComplete: '✓ Module Complete',
+    nextModule: 'Next Module →',
+    videoReadyBadge: '● Ready',
+    videoComingBadge: '● Coming Soon',
+    inProduction: '⏳ In Production',
+    videoComingSoon: 'Video coming soon',
+    platformTraining: 'Synovate Platform Training',
+    completeTitle: 'Training Complete',
+    completeSub: "You've completed all five Synovate training modules. Your results have been recorded.",
+    summaryName: 'Name',
+    summaryTitle: 'Title',
+    summaryShift: 'Shift',
+    summaryModules: 'Modules Completed',
+    summaryDate: 'Date',
+    returnFloor: 'Return to the floor. See your supervisor if you have questions.',
+    langLabel: 'Language'
+  },
+  es: {
+    loginBadge: '🏭 Rustic Bakery · Capacitación para Líderes de Línea',
+    loginHeading: 'Bienvenido, Líder de Línea',
+    loginSub: 'Ingrese su información para comenzar la capacitación. Su progreso será registrado y reportado a su gerente de planta.',
+    loginError: 'Por favor complete todos los campos para continuar.',
+    labelName: 'Nombre Completo',
+    placeholderName: 'ej. Maria Hernandez',
+    labelTitle: 'Puesto',
+    placeholderTitle: 'ej. Líder de Línea',
+    labelShift: 'Turno',
+    selectShift: 'Seleccione su turno…',
+    shift1: '1er Turno',
+    shift2: '2do Turno',
+    shift3: '3er Turno',
+    beginBtn: 'Comenzar Capacitación →',
+    footerQuestions: '¿Preguntas? Contacte a',
+    headerClient: 'Rustic Bakery · Capacitación para Líderes de Línea',
+    progressLabel: 'Progreso de Capacitación',
+    signOut: 'Cerrar Sesión',
+    sidebarHeading: 'Módulos de Capacitación',
+    completionLabel: '✓ Capacitación Completa',
+    completionSub: 'Todos los módulos han sido completados. Su finalización ha sido registrada.',
+    moduleOf: 'Módulo',
+    ofWord: 'de',
+    whatYoullLearn: 'Lo Que Aprenderá',
+    markComplete: 'Marcar Como Completo →',
+    moduleComplete: '✓ Módulo Completo',
+    nextModule: 'Siguiente Módulo →',
+    videoReadyBadge: '● Listo',
+    videoComingBadge: '● Próximamente',
+    inProduction: '⏳ En Producción',
+    videoComingSoon: 'Video próximamente',
+    platformTraining: 'Capacitación de la Plataforma Synovate',
+    completeTitle: 'Capacitación Completa',
+    completeSub: 'Ha completado los cinco módulos de capacitación de Synovate. Sus resultados han sido registrados.',
+    summaryName: 'Nombre',
+    summaryTitle: 'Puesto',
+    summaryShift: 'Turno',
+    summaryModules: 'Módulos Completados',
+    summaryDate: 'Fecha',
+    returnFloor: 'Regrese a la planta. Consulte a su supervisor si tiene preguntas.',
+    langLabel: 'Idioma'
+  }
+};
+
 var MODULES = [
   {
     id: 1,
-    title: 'Starting a Production Run',
-    desc: 'Learn how to initiate a Production Run in Synovate — from selecting the correct Manufacturing Order to confirming line configuration and crew count before starting.',
-    duration: '~8 min',
+    title: { en: 'Starting a Production Run', es: 'Cómo iniciar una corrida de producción' },
+    desc: {
+      en: 'Learn how to initiate a Production Run in Synovate — from selecting the correct Manufacturing Order to confirming line configuration and crew count before starting.',
+      es: 'Aprenda a iniciar una corrida de producción en Synovate — desde seleccionar el plan de manufactura correcto hasta confirmar la configuración de la línea y el número de personal antes de comenzar.'
+    },
+    duration: { en: '~8 min', es: '~8 min' },
     videoReady: true,
     videoSrc: 'https://drive.google.com/file/d/1eLbru4v_5TGzdzq1UmrVSdFhYSCLBuaD/preview',
-    keyPoints: [
-      'Navigate to Production Run Control from the main dashboard',
-      'Select the correct Manufacturing Order (MO) for your line',
-      'Verify and select all sublines with active sensors before starting',
-      'Enter your starting crew count accurately — this drives efficiency calculations',
-      'Confirm line speed setting matches the MO specification'
-    ]
+    keyPoints: {
+      en: [
+        'Navigate to Production Run Control from the main dashboard',
+        'Select the correct Manufacturing Order (MO) for your line',
+        'Verify and select all sublines with active sensors before starting',
+        'Enter your starting crew count accurately — this drives efficiency calculations',
+        'Confirm line speed setting matches the MO specification'
+      ],
+      es: [
+        'Vaya a Control de Corridas de Producción desde el panel principal',
+        'Seleccione el plan de manufactura (MO) correcto para su línea',
+        'Verifique y seleccione todas las sublíneas con sensores activos antes de comenzar',
+        'Ingrese el número de personal inicial con precisión — esto determina los cálculos de eficiencia',
+        'Confirme que la velocidad de línea coincida con la especificación del plan de manufactura'
+      ]
+    }
   },
   {
     id: 2,
-    title: 'Recording Downtime',
-    desc: 'Every minute of unplanned downtime must be captured with a reason code. This module covers how to log downtime events in Synovate during and after they occur.',
-    duration: '~6 min',
+    title: { en: 'Recording Downtime', es: 'Cómo registrar tiempo muerto' },
+    desc: {
+      en: 'Every minute of unplanned downtime must be captured with a reason code. This module covers how to log downtime events in Synovate during and after they occur.',
+      es: 'Cada minuto de tiempo muerto no planificado debe registrarse con un código de razón. Este módulo explica cómo registrar eventos de tiempo muerto en Synovate durante y después de que ocurren.'
+    },
+    duration: { en: '~6 min', es: '~6 min' },
     videoReady: true,
     videoSrc: 'https://drive.google.com/file/d/16EVPlsVAe59c9poI5QfLyodJF8kNYPEw/preview',
-    keyPoints: [
-      'Downtime events appear automatically when the line stops — a reason code is still required',
-      'Enter the reason code within 15 minutes of the event occurring',
-      'Automated (A-type) events still require a manual reason entry to be valid for CI analysis',
-      'Unrecorded downtime cannot be used in root cause analysis or performance reporting',
-      'At shift end, review your downtime log and back-fill any missing reasons before handover'
-    ]
+    keyPoints: {
+      en: [
+        'Downtime events appear automatically when the line stops — a reason code is still required',
+        'Enter the reason code within 15 minutes of the event occurring',
+        'Automated (A-type) events still require a manual reason entry to be valid for CI analysis',
+        'Unrecorded downtime cannot be used in root cause analysis or performance reporting',
+        'At shift end, review your downtime log and back-fill any missing reasons before handover'
+      ],
+      es: [
+        'Los eventos de tiempo muerto aparecen automáticamente cuando la línea se detiene — de todas formas se requiere un código de razón',
+        'Ingrese el código de razón dentro de los 15 minutos posteriores al evento',
+        'Los eventos automáticos (tipo A) también requieren una razón ingresada manualmente para ser válidos en el análisis de mejora continua',
+        'El tiempo muerto no registrado no puede usarse en el análisis de causa raíz ni en los reportes de desempeño',
+        'Al final del turno, revise su registro de tiempo muerto y complete cualquier razón faltante antes del relevo'
+      ]
+    }
   },
   {
     id: 3,
-    title: 'Shift Transition',
-    desc: 'A clean shift handover keeps production data accurate and the oncoming lead informed. This module walks through ending your shift and transitioning the run in Synovate.',
-    duration: '~7 min',
+    title: { en: 'Shift Transition', es: 'Transición de turno' },
+    desc: {
+      en: 'A clean shift handover keeps production data accurate and the oncoming lead informed. This module walks through ending your shift and transitioning the run in Synovate.',
+      es: 'Un relevo de turno claro mantiene los datos de producción precisos e informa al líder entrante. Este módulo explica cómo terminar su turno y transicionar la corrida en Synovate.'
+    },
+    duration: { en: '~7 min', es: '~7 min' },
     videoReady: false,
     videoSrc: '',
-    keyPoints: [
-      'Review and close all open downtime events before ending your shift',
-      'Update the crew count to reflect actual headcount at shift close',
-      'Use the shift notes field to flag any open issues for the oncoming lead',
-      'Do not end the production run unless the line is physically stopping — a shift transition is not a run close',
-      'Confirm handover with the incoming lead verbally and in Synovate'
-    ]
+    keyPoints: {
+      en: [
+        'Review and close all open downtime events before ending your shift',
+        'Update the crew count to reflect actual headcount at shift close',
+        'Use the shift notes field to flag any open issues for the oncoming lead',
+        'Do not end the production run unless the line is physically stopping — a shift transition is not a run close',
+        'Confirm handover with the incoming lead verbally and in Synovate'
+      ],
+      es: [
+        'Revise y cierre todos los eventos de tiempo muerto abiertos antes de terminar su turno',
+        'Actualice el número de personal para reflejar el conteo real al cierre del turno',
+        'Use el campo de notas de turno para señalar cualquier asunto pendiente al líder entrante',
+        'No termine la corrida de producción a menos que la línea se esté deteniendo físicamente — una transición de turno no es un cierre de corrida',
+        'Confirme el relevo con el líder entrante de forma verbal y en Synovate'
+      ]
+    }
   },
   {
     id: 4,
-    title: 'Product Changeover',
-    desc: 'Changing products mid-shift requires specific steps in Synovate to ensure the new run is tracked accurately and separately from the prior run.',
-    duration: '~9 min',
+    title: { en: 'Product Changeover', es: 'Cambio de producto' },
+    desc: {
+      en: 'Changing products mid-shift requires specific steps in Synovate to ensure the new run is tracked accurately and separately from the prior run.',
+      es: 'Cambiar de producto a mitad de turno requiere pasos específicos en Synovate para asegurar que la nueva corrida se registre con precisión y por separado de la corrida anterior.'
+    },
+    duration: { en: '~9 min', es: '~9 min' },
     videoReady: false,
     videoSrc: '',
-    keyPoints: [
-      'Close the current production run before beginning changeover activities',
-      'Do not start the new MO until the line is physically ready to run',
-      'Changeover time between runs should be recorded as planned downtime under the outgoing run',
-      'Select the correct sublines for the new product — configurations differ by SKU',
-      'Verify the new MO quantity and order type before confirming the run start'
-    ]
+    keyPoints: {
+      en: [
+        'Close the current production run before beginning changeover activities',
+        'Do not start the new MO until the line is physically ready to run',
+        'Changeover time between runs should be recorded as planned downtime under the outgoing run',
+        'Select the correct sublines for the new product — configurations differ by SKU',
+        'Verify the new MO quantity and order type before confirming the run start'
+      ],
+      es: [
+        'Cierre la corrida de producción actual antes de comenzar las actividades de cambio',
+        'No inicie el nuevo plan de manufactura hasta que la línea esté físicamente lista para operar',
+        'El tiempo de cambio entre corridas debe registrarse como tiempo muerto planificado bajo la corrida saliente',
+        'Seleccione las sublíneas correctas para el nuevo producto — la configuración varía según el SKU',
+        'Verifique la cantidad y el tipo de orden del nuevo plan de manufactura antes de confirmar el inicio de la corrida'
+      ]
+    }
   },
   {
     id: 5,
-    title: 'Creating a Work Order',
-    desc: 'Learn how to create and configure a new Manufacturing Order (MO) in Synovate when one is missing or needs to be generated at the line level.',
-    duration: '~7 min',
+    title: { en: 'Creating a Work Order', es: 'Cómo crear una orden de trabajo' },
+    desc: {
+      en: 'Learn how to create and configure a new Manufacturing Order (MO) in Synovate when one is missing or needs to be generated at the line level.',
+      es: 'Aprenda a crear y configurar un nuevo plan de manufactura (MO) en Synovate cuando falte uno o cuando deba generarse a nivel de línea.'
+    },
+    duration: { en: '~7 min', es: '~7 min' },
     videoReady: true,
     videoSrc: 'https://drive.google.com/file/d/1YVC_klvgFTT70_wpIlNZq0gxoBakDofW/preview',
-    keyPoints: [
-      'Work orders should only be created at the line level if authorized by your supervisor',
-      'Enter the correct SKU — mismatches between the MO and the physical product create reporting errors',
-      'Set the correct order quantity in the right unit of measure (cases vs. units)',
-      'Assign the work order to the correct production line before saving',
-      'Once created, verify the MO appears in the Production Run Control queue before starting'
-    ]
+    keyPoints: {
+      en: [
+        'Work orders should only be created at the line level if authorized by your supervisor',
+        'Enter the correct SKU — mismatches between the MO and the physical product create reporting errors',
+        'Set the correct order quantity in the right unit of measure (cases vs. units)',
+        'Assign the work order to the correct production line before saving',
+        'Once created, verify the MO appears in the Production Run Control queue before starting'
+      ],
+      es: [
+        'Las órdenes de trabajo solo deben crearse a nivel de línea si su supervisor lo autoriza',
+        'Ingrese el SKU correcto — las discrepancias entre el plan de manufactura y el producto físico generan errores en los reportes',
+        'Establezca la cantidad correcta en la unidad de medida adecuada (cajas versus unidades)',
+        'Asigne la orden de trabajo a la línea de producción correcta antes de guardar',
+        'Una vez creada, verifique que el plan de manufactura aparezca en la cola de Control de Corridas de Producción antes de comenzar'
+      ]
+    }
   }
 ];
 
@@ -1147,8 +1338,13 @@ var state = {
   user: null,
   currentModule: 0,
   completed: [],
-  loginTime: null
+  loginTime: null,
+  lang: 'en'
 };
+
+function t(key) {
+  return UI_TEXT[state.lang][key];
+}
 
 // Persist to localStorage (per-session convenience)
 var STORAGE_KEY = 'rb_training_sessions';
@@ -1182,6 +1378,51 @@ function upsertSession() {
 // ══════════════════════════════════════════════════════
 // LOGIN
 // ══════════════════════════════════════════════════════
+function setLoginLang(lang) {
+  state.lang = lang;
+  document.getElementById('lang-btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('lang-btn-es').classList.toggle('active', lang === 'es');
+  applyLoginText();
+}
+
+function applyLoginText() {
+  var tx = UI_TEXT[state.lang];
+  document.getElementById('login-badge-text').textContent = tx.loginBadge;
+  document.getElementById('login-heading-text').textContent = tx.loginHeading;
+  document.getElementById('login-sub-text').textContent = tx.loginSub;
+  document.getElementById('login-error').textContent = tx.loginError;
+  document.getElementById('label-name').textContent = tx.labelName;
+  document.getElementById('input-name').placeholder = tx.placeholderName;
+  document.getElementById('label-title').textContent = tx.labelTitle;
+  document.getElementById('input-title').placeholder = tx.placeholderTitle;
+  document.getElementById('label-shift').textContent = tx.labelShift;
+  document.getElementById('opt-select-shift').textContent = tx.selectShift;
+  document.getElementById('opt-shift1').textContent = tx.shift1;
+  document.getElementById('opt-shift2').textContent = tx.shift2;
+  document.getElementById('opt-shift3').textContent = tx.shift3;
+  document.getElementById('begin-btn').textContent = tx.beginBtn;
+  document.getElementById('footer-questions-text').textContent = tx.footerQuestions;
+}
+
+function setSessionLang(lang) {
+  state.lang = lang;
+  document.getElementById('header-lang-btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('header-lang-btn-es').classList.toggle('active', lang === 'es');
+  applyTrainingText();
+  renderSidebar();
+  loadModule(state.currentModule);
+}
+
+function applyTrainingText() {
+  var tx = UI_TEXT[state.lang];
+  document.getElementById('header-client-text').textContent = tx.headerClient;
+  document.getElementById('progress-label-text').textContent = tx.progressLabel;
+  document.getElementById('signout-btn').textContent = tx.signOut;
+  document.getElementById('sidebar-heading-text').textContent = tx.sidebarHeading;
+  document.getElementById('sidebar-completion-label').textContent = tx.completionLabel;
+  document.getElementById('sidebar-completion-sub').textContent = tx.completionSub;
+}
+
 function startTraining() {
   var name = document.getElementById('input-name').value.trim();
   var title = document.getElementById('input-title').value.trim();
@@ -1201,6 +1442,9 @@ function startTraining() {
 
   upsertSession();
   showScreen('screen-training');
+  document.getElementById('header-lang-btn-en').classList.toggle('active', state.lang === 'en');
+  document.getElementById('header-lang-btn-es').classList.toggle('active', state.lang === 'es');
+  applyTrainingText();
   renderHeader();
   renderSidebar();
   loadModule(0);
@@ -1249,6 +1493,7 @@ function updateProgress() {
 // ══════════════════════════════════════════════════════
 function renderSidebar() {
   var html = '';
+  var tx = UI_TEXT[state.lang];
   MODULES.forEach(function(m, i) {
     var isDone = state.completed.indexOf(i) >= 0;
     var isActive = state.currentModule === i;
@@ -1257,8 +1502,8 @@ function renderSidebar() {
     html += '<div class="module-item' + (isActive ? ' active' : '') + '" onclick="loadModule(' + i + ')">';
     html += '<div class="module-status ' + statusClass + '">' + statusIcon + '</div>';
     html += '<div class="module-info">';
-    html += '<div class="module-num">Module ' + (i + 1) + '</div>';
-    html += '<div class="module-title">' + m.title + '</div>';
+    html += '<div class="module-num">' + tx.moduleOf + ' ' + (i + 1) + '</div>';
+    html += '<div class="module-title">' + m.title[state.lang] + '</div>';
     html += '</div></div>';
   });
   document.getElementById('sidebar-modules').innerHTML = html;
@@ -1275,6 +1520,8 @@ function loadModule(index) {
   var m = MODULES[index];
   var isDone = state.completed.indexOf(index) >= 0;
   var isLast = index === MODULES.length - 1;
+  var tx = UI_TEXT[state.lang];
+  var lang = state.lang;
 
   // Video section
   var videoHtml;
@@ -1283,42 +1530,42 @@ function loadModule(index) {
   } else if(m.videoReady && !m.videoSrc) {
     videoHtml = '<div class="video-placeholder">'
       + '<div class="play-ring"><div class="play-icon"></div></div>'
-      + '<div class="video-placeholder-label">Video — Module ' + (index+1) + '</div>'
+      + '<div class="video-placeholder-label">Video — ' + tx.moduleOf + ' ' + (index+1) + '</div>'
       + '</div>';
   } else {
     videoHtml = '<div class="video-placeholder">'
       + '<div class="play-ring" style="opacity:.4"><div class="play-icon" style="border-left-color:var(--muted)"></div></div>'
-      + '<div class="video-placeholder-label" style="color:var(--muted);">Video coming soon</div>'
-      + '<div class="video-coming-badge">⏳ In Production</div>'
+      + '<div class="video-placeholder-label" style="color:var(--muted);">' + tx.videoComingSoon + '</div>'
+      + '<div class="video-coming-badge">' + tx.inProduction + '</div>'
       + '</div>';
   }
 
   // Key points
-  var pointsHtml = m.keyPoints.map(function(p){
+  var pointsHtml = m.keyPoints[lang].map(function(p){
     return '<div class="key-point"><div class="key-point-dot"></div><span>' + p + '</span></div>';
   }).join('');
 
   // Buttons
   var btnHtml;
   if(isDone) {
-    btnHtml = '<button class="complete-btn done">✓ Module Complete</button>';
+    btnHtml = '<button class="complete-btn done">' + tx.moduleComplete + '</button>';
     if(!isLast) {
-      btnHtml += '<button class="next-module-btn" onclick="loadModule(' + (index+1) + ')">Next Module →</button>';
+      btnHtml += '<button class="next-module-btn" onclick="loadModule(' + (index+1) + ')">' + tx.nextModule + '</button>';
     }
   } else {
-    btnHtml = '<button class="complete-btn" id="mark-complete-btn" onclick="markComplete(' + index + ')">Mark as Complete →</button>';
+    btnHtml = '<button class="complete-btn" id="mark-complete-btn" onclick="markComplete(' + index + ')">' + tx.markComplete + '</button>';
   }
 
-  var html = '<div class="module-eyebrow">Module ' + (index+1) + ' of ' + MODULES.length + '</div>'
-    + '<div class="module-main-title">' + m.title + '</div>'
-    + '<div class="module-desc">' + m.desc + '</div>'
+  var html = '<div class="module-eyebrow">' + tx.moduleOf + ' ' + (index+1) + ' ' + tx.ofWord + ' ' + MODULES.length + '</div>'
+    + '<div class="module-main-title">' + m.title[lang] + '</div>'
+    + '<div class="module-desc">' + m.desc[lang] + '</div>'
     + '<div class="video-card">'
     + videoHtml
     + '<div class="video-meta">'
-    + '<div><div class="video-meta-title">' + m.title + '</div><div class="video-meta-info">Synovate Platform Training · ' + m.duration + '</div></div>'
-    + '<div class="video-status-badge ' + (m.videoReady ? 'complete' : 'pending') + '">' + (m.videoReady ? '● Ready' : '● Coming Soon') + '</div>'
+    + '<div><div class="video-meta-title">' + m.title[lang] + '</div><div class="video-meta-info">' + tx.platformTraining + ' · ' + m.duration[lang] + '</div></div>'
+    + '<div class="video-status-badge ' + (m.videoReady ? 'complete' : 'pending') + '">' + (m.videoReady ? tx.videoReadyBadge : tx.videoComingBadge) + '</div>'
     + '</div></div>'
-    + '<div class="key-points"><div class="key-points-title">What You\'ll Learn</div>' + pointsHtml + '</div>'
+    + '<div class="key-points"><div class="key-points-title">' + tx.whatYoullLearn + '</div>' + pointsHtml + '</div>'
     + btnHtml;
 
   document.getElementById('main-content').innerHTML = html;
@@ -1353,11 +1600,21 @@ function markComplete(index) {
 // COMPLETION SCREEN
 // ══════════════════════════════════════════════════════
 function showCompletionScreen() {
+  var tx = UI_TEXT[state.lang];
+  var locale = state.lang === 'es' ? 'es-MX' : 'en-US';
+  document.getElementById('complete-title-text').textContent = tx.completeTitle;
+  document.getElementById('complete-sub').textContent = tx.completeSub;
+  document.getElementById('summary-label-name').textContent = tx.summaryName;
+  document.getElementById('summary-label-title').textContent = tx.summaryTitle;
+  document.getElementById('summary-label-shift').textContent = tx.summaryShift;
+  document.getElementById('summary-label-modules').textContent = tx.summaryModules;
+  document.getElementById('summary-label-date').textContent = tx.summaryDate;
+  document.getElementById('return-floor-text').textContent = tx.returnFloor;
   document.getElementById('summary-name').textContent = state.user.name;
   document.getElementById('summary-title').textContent = state.user.title;
   document.getElementById('summary-shift').textContent = state.user.shift;
   document.getElementById('summary-modules').textContent = MODULES.length + ' / ' + MODULES.length;
-  document.getElementById('summary-date').textContent = new Date().toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+  document.getElementById('summary-date').textContent = new Date().toLocaleDateString(locale, {weekday:'long', year:'numeric', month:'long', day:'numeric'});
   showScreen('screen-complete');
 }
 
