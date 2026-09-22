@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Rustic Bakery — Line Lead Training</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap');
+
+:root {
+  --bg: #060c14;
+  --navy: #0b1525;
+  --card: #0f1d30;
+  --border: rgba(255,255,255,0.07);
+  --accent: #E22027;
+  --accent2: #c41c22;
+  --text: #e2eaf4;
+  --muted: #6b84a0;
+  --faint: #1a2d45;
+  --green: #10b981;
+  --yellow: #f59e0b;
+  --box-sizing: border-box;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Barlow', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── BACKGROUND ──────────────────────── */
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(226,32,39,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(226,32,39,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.orb {
+  position: fixed; border-radius: 50%; filter: blur(80px);
+  z-index: 0; pointer-events: none;
+}
+.orb1 { width:500px; height:500px; background:rgba(226,32,39,0.06); top:-150px; right:-100px; animation: drift1 14s ease-in-out infinite; }
+.orb2 { width:320px; height:320px; background:rgba(17,42,71,0.8); bottom:-80px; left:-60px; animation: drift2 18s ease-in-out infinite; }
+@keyframes drift1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-40px,60px)} }
+@keyframes drift2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(50px,-30px)} }
+
+/* ── SCREENS ─────────────────────────── */
+.screen { display:none; position:relative; z-index:1; min-height:100vh; }
+.screen.active { display:flex; }
+
+/* ── LOGIN SCREEN ───────────────────── */
+#screen-login {
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.login-wrap {
+  width: 100%;
+  max-width: 460px;
+  animation: slideUp .5s cubic-bezier(.16,1,.3,1) both;
+}
+
+.login-brand {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.login-brand svg { height: 38px; display: inline-block; margin-bottom: 1rem; }
+.login-client-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(226,32,39,0.1);
+  border: 1px solid rgba(226,32,39,0.2);
+  border-radius: 20px;
+  padding: .3rem .85rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.login-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.5rem;
+}
+
+.login-heading {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: .35rem;
+}
+.login-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.form-group { margin-bottom: 1.1rem; }
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .8px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: .4rem;
+}
+.form-input {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: .75rem 1rem;
+  font-size: 14px;
+  font-family: 'Barlow', sans-serif;
+  color: var(--text);
+  outline: none;
+  transition: border-color .2s, background .2s;
+}
+.form-input:focus {
+  border-color: rgba(226,32,39,0.4);
+  background: rgba(255,255,255,0.06);
+}
+.form-input::placeholder { color: var(--muted); }
+
+.form-select {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: .75rem 1rem;
+  font-size: 14px;
+  font-family: 'Barlow', sans-serif;
+  color: var(--text);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b84a0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  transition: border-color .2s;
+}
+.form-select:focus { border-color: rgba(226,32,39,0.4); }
+.form-select option { background: #0f1d30; color: var(--text); }
+
+.status-msg {
+  border-radius: 8px;
+  padding: .65rem .9rem;
+  font-size: 13px;
+  margin-bottom: 1rem;
+  display: none;
+}
+.status-msg.show { display: block; }
+.status-msg.error {
+  background: rgba(226,32,39,0.1);
+  border: 1px solid rgba(226,32,39,0.25);
+  color: #ff9999;
+}
+
+.login-btn {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: .9rem;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: .5px;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  margin-top: .5rem;
+}
+.login-btn:hover { background: var(--accent2); transform: translateY(-1px); }
+.login-btn:active { transform: translateY(0); }
+
+.login-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* ── TRAINING SCREEN ─────────────────── */
+#screen-training {
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+.training-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(6,12,20,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+.header-logo svg { height: 28px; display: block; }
+
+.header-divider {
+  width: 1px; height: 24px;
+  background: var(--border);
+}
+
+.header-client {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: .3rem .75rem;
+}
+.user-avatar {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+.user-name { font-size: 12px; font-weight: 600; }
+.user-shift { font-size: 11px; color: var(--muted); }
+
+.progress-bar-wrap {
+  flex: 1;
+  max-width: 260px;
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: .3rem;
+  font-weight: 600;
+  letter-spacing: .5px;
+}
+.progress-track {
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+  transition: width .6s cubic-bezier(.16,1,.3,1);
+}
+
+.logout-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: .3rem .75rem;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: 'Barlow', sans-serif;
+  transition: .15s;
+}
+.logout-btn:hover { color: #fff; border-color: rgba(255,255,255,0.15); }
+
+/* Training Body */
+.training-body {
+  display: flex;
+  flex: 1;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  padding: 1.5rem 1rem;
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+.sidebar-heading {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 .5rem;
+  margin-bottom: 1rem;
+}
+
+.module-item {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  padding: .65rem .75rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .15s;
+  margin-bottom: .25rem;
+  position: relative;
+}
+.module-item:hover { background: rgba(255,255,255,0.04); }
+.module-item.active { background: rgba(226,32,39,0.08); }
+.module-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 3px; height: 70%;
+  background: var(--accent);
+  border-radius: 0 2px 2px 0;
+}
+
+.module-status {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-size: 10px;
+  transition: .2s;
+}
+.module-status.done {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+.module-status.active-status {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.module-status.locked { opacity: .4; }
+
+.module-info {}
+.module-num {
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: .5px;
+  margin-bottom: .1rem;
+}
+.module-title {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.module-item.active .module-title { color: #fff; }
+
+.sidebar-completion {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(16,185,129,0.06);
+  border: 1px solid rgba(16,185,129,0.15);
+  border-radius: 12px;
+  display: none;
+}
+.sidebar-completion.show { display: block; }
+.completion-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: .25rem;
+}
+.completion-sub {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  padding: 2.5rem 3rem;
+  max-width: 860px;
+}
+
+.module-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: .5rem;
+}
+.module-main-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: .75rem;
+}
+.module-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 560px;
+  margin-bottom: 2rem;
+}
+
+/* Video card */
+.video-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.video-placeholder {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, #0a1628 0%, #0f1d30 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.video-placeholder.has-video {
+  background: #000;
+}
+
+.video-placeholder video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.play-ring {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  border: 2px solid rgba(226,32,39,0.4);
+  display: flex; align-items: center; justify-content: center;
+  transition: .2s;
+}
+.play-ring:hover { border-color: var(--accent); transform: scale(1.05); }
+.play-icon {
+  width: 0; height: 0;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-left: 20px solid var(--accent);
+  margin-left: 4px;
+}
+.video-placeholder-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .5px;
+}
+.video-coming-badge {
+  position: absolute;
+  top: 12px; right: 12px;
+  background: rgba(245,158,11,0.15);
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: 20px;
+  padding: .25rem .65rem;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+
+.video-meta {
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+}
+.video-meta-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+.video-meta-info {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: .2rem;
+}
+.video-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  padding: .3rem .75rem;
+  border-radius: 20px;
+}
+.video-status-badge.complete {
+  background: rgba(16,185,129,0.12);
+  color: var(--green);
+}
+.video-status-badge.pending {
+  background: rgba(245,158,11,0.1);
+  color: var(--yellow);
+}
+
+/* Key points */
+.key-points {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+.key-points-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+.key-point {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  padding: .5rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.key-point:last-child { border-bottom: none; padding-bottom: 0; }
+.key-point-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* Mark complete button */
+.complete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: .8rem 1.5rem;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: .5px;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  margin-bottom: 3rem;
+}
+.complete-btn:hover { background: var(--accent2); transform: translateY(-1px); }
+.complete-btn:active { transform: translateY(0); }
+.complete-btn.done {
+  background: var(--green);
+  cursor: default;
+  pointer-events: none;
+}
+.complete-btn.done:hover { transform: none; }
+
+.next-module-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: .8rem 1.5rem;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: .5px;
+  cursor: pointer;
+  transition: .15s;
+  margin-left: .75rem;
+  margin-bottom: 3rem;
+}
+.next-module-btn:hover {
+  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.04);
+}
+
+/* ── COMPLETION SCREEN ───────────────── */
+#screen-complete {
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.complete-icon {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(16,185,129,0.15);
+  border: 2px solid rgba(16,185,129,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
+  margin: 0 auto 1.5rem;
+  animation: popIn .5s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes popIn {
+  from { transform: scale(.5); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.complete-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: .5rem;
+}
+.complete-sub {
+  font-size: 15px;
+  color: var(--muted);
+  max-width: 440px;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+}
+
+.completion-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+  min-width: 340px;
+  text-align: left;
+}
+.completion-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .5rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.completion-row:last-child { border-bottom: none; }
+.completion-row-label { color: var(--muted); }
+.completion-row-value { font-weight: 600; }
+.completion-row-value.green { color: var(--green); }
+
+/* ── ADMIN VIEW ─────────────────────── */
+.admin-fab {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 200;
+  background: var(--navy);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: .55rem 1rem;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  display: none;
+  transition: .15s;
+}
+.admin-fab:hover { color: #fff; }
+.admin-fab.show { display: block; }
+
+.admin-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(6,12,20,0.92);
+  display: none; align-items: center; justify-content: center;
+}
+.admin-overlay.open { display: flex; }
+
+.admin-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  width: 760px; max-width: 95vw;
+  max-height: 90vh; overflow-y: auto;
+  padding: 2rem;
+  animation: slideUp .3s ease both;
+}
+
+.admin-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.admin-panel-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+}
+.admin-close-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: .35rem .75rem;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: 'Barlow', sans-serif;
+  transition: .15s;
+}
+.admin-close-btn:hover { color: #fff; }
+
+.admin-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: .75rem;
+  margin-bottom: 1.5rem;
+}
+.admin-stat {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: .85rem;
+  text-align: center;
+}
+.admin-stat-num { font-size: 24px; font-weight: 700; }
+.admin-stat-num.red { color: var(--accent); }
+.admin-stat-num.green { color: var(--green); }
+.admin-stat-num.yellow { color: var(--yellow); }
+.admin-stat-lbl { font-size: 11px; color: var(--muted); margin-top: .2rem; }
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.admin-table th {
+  text-align: left;
+  padding: .5rem .75rem;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+.admin-table td {
+  padding: .65rem .75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  vertical-align: middle;
+}
+.admin-table tr:last-child td { border-bottom: none; }
+
+.progress-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: .2rem .65rem;
+  font-size: 11px;
+}
+.pill-bar {
+  width: 40px; height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.pill-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+}
+.pill-fill.complete { background: var(--green); }
+
+.admin-export-btn {
+  margin-top: 1.25rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: .5rem 1rem;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: 'Barlow', sans-serif;
+  transition: .15s;
+}
+.admin-export-btn:hover { color: #fff; border-color: rgba(255,255,255,0.2); }
+
+/* responsive */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main-content { padding: 1.5rem; }
+  .training-header { padding: 0 1rem; }
+  .progress-bar-wrap { display: none; }
+  .admin-stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 1 — LOGIN
+════════════════════════════════════════ -->
+<div id="screen-login" class="screen active">
+  <div class="login-wrap">
+    <div class="login-brand">
+      <!-- Synovate SVG Logo -->
+      <svg viewBox="0 0 238 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M136.305 41.7045L139.136 35.0921L128.542 12.5609H123.132L136.155 41.7045H136.305Z" fill="white"/>
+        <path d="M21.651 27.4184C20.5121 26.8252 19.271 26.3626 17.9172 26.0415C16.5633 25.715 15.2041 25.432 13.8395 25.1762C12.4695 24.9258 11.2177 24.6374 10.0787 24.3108C8.93977 23.9843 8.02645 23.4999 7.33341 22.8523C6.64036 22.2047 6.29115 21.323 6.29115 20.2073C6.29115 18.7651 6.87675 17.6494 8.04795 16.8603C9.21914 16.0712 10.89 15.6739 13.0604 15.6739C15.2309 15.6739 16.7728 16.1038 17.9118 16.9692C19.0507 17.8345 19.6901 19.1134 19.8298 20.806L25.3741 20.5339C25.127 18.6617 24.493 17.1052 23.483 15.8589C22.4676 14.6181 21.0815 13.682 19.3247 13.0507C17.5626 12.4194 15.4404 12.1037 12.953 12.1037C8.90217 12.1037 5.82375 12.8058 3.72849 14.2099C1.62786 15.614 0.580226 17.6658 0.580226 20.3706C0.580226 22.1013 0.929436 23.4945 1.62248 24.5558C2.31553 25.617 3.22885 26.4442 4.36781 27.0429C5.50677 27.6361 6.74781 28.0987 8.10167 28.4198C9.45553 28.7409 10.8148 29.0239 12.1794 29.2579C13.5493 29.4919 14.7904 29.7804 15.9132 30.1232C17.0307 30.4661 17.9386 30.945 18.6317 31.5546C19.3247 32.1696 19.6739 33.0512 19.6739 34.1995C19.6739 35.571 19.0883 36.6323 17.9172 37.3887C16.746 38.1452 15.0698 38.5262 12.9046 38.5262C10.5945 38.5262 8.84307 38.069 7.65038 37.1493C6.4577 36.2295 5.75928 34.82 5.54438 32.9097L0 33.1274C0.462032 36.2241 1.74068 38.5044 3.84131 39.963C5.93657 41.4215 8.97738 42.1508 12.9584 42.1508C16.9394 42.1508 20.1467 41.465 22.2635 40.099C24.3802 38.733 25.4386 36.7139 25.4386 34.0472C25.4386 32.3165 25.0894 30.9342 24.3963 29.8892C23.7033 28.8443 22.7846 28.028 21.651 27.4293V27.4184Z" fill="white"/>
+        <path d="M42.0556 36.1969H41.8944L32.8311 12.5337H27.3888L39.0417 42.4828L35.7107 51H41.6903L55.9219 12.5337H50.5334L42.0556 36.1969Z" fill="white"/>
+        <path d="M76.8426 12.1037C72.6091 12.1037 69.348 13.497 67.0593 16.2889C66.3931 17.0998 65.8236 18.0195 65.3509 19.0372L64.3677 12.5391H60.4189V41.71H65.8075V27.9899C65.8075 24.2074 66.5865 21.3176 68.1553 19.3202C69.7187 17.3229 71.9429 16.3215 74.8225 16.3215C77.3476 16.3215 79.1957 17.0127 80.3669 18.4005C81.5381 19.7883 82.1237 21.9761 82.1237 24.9639V41.71H87.5123V24.3707C87.5123 20.191 86.6473 17.1052 84.9281 15.1079C83.2036 13.1106 80.5119 12.1092 76.8479 12.1092L76.8426 12.1037Z" fill="white"/>
+        <path d="M120.069 17.9923C118.93 16.0821 117.276 14.6235 115.111 13.6167C112.94 12.6099 110.367 12.1037 107.38 12.1037C104.393 12.1037 101.878 12.6153 99.7293 13.6439C97.5803 14.6725 95.9148 16.131 94.7436 18.0195C93.5724 19.908 92.9814 22.172 92.9814 24.8007V29.4484C92.9814 32.077 93.5563 34.3465 94.7167 36.2567C95.8718 38.167 97.5265 39.6255 99.6755 40.6324C101.825 41.6392 104.393 42.1453 107.38 42.1453C110.367 42.1453 112.945 41.6392 115.111 40.6324C117.281 39.6255 118.93 38.167 120.069 36.2567C121.208 34.3465 121.778 32.077 121.778 29.4484V24.8007C121.778 22.172 121.208 19.9026 120.069 17.9923ZM116.389 29.3341C116.389 31.9628 115.578 34.0417 113.961 35.571C112.344 37.1003 110.146 37.8677 107.374 37.8677C104.602 37.8677 102.458 37.0949 100.841 35.5438C99.2242 33.9982 98.413 31.9247 98.413 29.3341V24.9041C98.413 22.3135 99.2189 20.24 100.841 18.6889C102.458 17.1433 104.634 16.3651 107.374 16.3651C110.114 16.3651 112.344 17.1324 113.961 18.6617C115.578 20.191 116.389 22.2754 116.389 24.8986V29.3287V29.3341Z" fill="white"/>
+        <path d="M180.992 14.7759C178.967 12.9908 175.889 12.1037 171.768 12.1037C170.452 12.1037 169.049 12.2289 167.556 12.4792C166.062 12.7296 164.639 13.0833 163.29 13.5351C161.936 13.9868 160.749 14.4983 159.717 15.0752L160.518 19.0753C162.012 18.1774 163.618 17.4807 165.342 16.9964C167.067 16.512 168.781 16.2671 170.489 16.2671C173.261 16.2671 175.298 16.8004 176.598 17.8617C177.893 18.923 178.543 20.5883 178.543 22.8577V26.9449C178.269 26.6837 177.968 26.4388 177.635 26.2102C175.609 24.8061 172.853 24.104 169.366 24.104C165.88 24.104 163.489 24.8442 161.662 26.3191C159.83 27.7939 158.917 29.8511 158.917 32.4798V33.8295C158.917 36.4581 159.825 38.5044 161.635 39.963C163.451 41.4215 165.939 42.1508 169.103 42.1508C172.73 42.1508 175.566 41.4052 177.608 39.9085C178.387 39.3425 179.015 38.6895 179.494 37.9493L180.084 41.7154H184.033V22.8632C184.033 19.2604 183.023 16.5719 180.992 14.7868V14.7759ZM178.43 33.2798C178.43 34.9724 177.726 36.3329 176.324 37.3561C174.916 38.3847 173.025 38.8963 170.645 38.8963C168.544 38.8963 166.911 38.4173 165.74 37.4649C164.569 36.5125 163.983 35.152 163.983 33.3886V32.741C163.983 30.8307 164.585 29.443 165.794 28.5831C167.003 27.7177 168.69 27.2878 170.86 27.2878C173.24 27.2878 175.099 27.745 176.431 28.6647C177.764 29.5845 178.43 30.8688 178.43 32.5288V33.2852V33.2798Z" fill="white"/>
+        <path d="M204.862 37.6826C204.255 37.7752 203.67 37.8187 203.1 37.8187C201.467 37.8187 200.317 37.4486 199.662 36.7139C199.006 35.9738 198.673 34.6894 198.673 32.8499V16.5338H206.087V12.5337H198.673V5.51307H194.832L193.36 12.5337H188.009V16.5338H193.236V33.6063C193.236 36.5234 193.876 38.6786 195.154 40.0609C196.433 41.4487 198.442 42.1399 201.182 42.1399C201.891 42.1399 202.606 42.0964 203.315 42.0038C204.024 41.9113 204.728 41.7807 205.421 41.6011C206.114 41.4215 206.743 41.2256 207.312 41.0079L206.619 37.2255C206.05 37.4432 205.464 37.5956 204.862 37.6826Z" fill="white"/>
+        <path d="M238 28.6321V25.715C238 21.3557 236.808 17.9978 234.428 15.6412C232.048 13.2847 228.631 12.1037 224.188 12.1037C221.27 12.1037 218.767 12.6099 216.666 13.6167C214.566 14.6235 212.948 16.0766 211.815 17.9651C210.676 19.8536 210.106 22.1339 210.106 24.8007V29.4484C210.106 32.1478 210.638 34.4445 211.707 36.3384C212.777 38.2269 214.318 39.6691 216.349 40.6596C218.375 41.6501 220.808 42.1453 223.656 42.1453C227.422 42.1453 230.527 41.3562 232.961 39.767C235.395 38.1833 236.969 35.9302 237.683 33.0131L232.51 32.6322C232.155 34.4336 231.236 35.8268 229.764 36.8173C228.287 37.8078 226.358 38.3031 223.978 38.3031C221.313 38.3031 219.24 37.5901 217.768 36.1697C216.29 34.7492 215.554 32.7029 215.554 30.0362V28.6321H238.006H238ZM217.843 18.395C219.369 16.9038 221.523 16.1528 224.295 16.1528C227.067 16.1528 229.06 16.893 230.586 18.3678C232.112 19.8427 232.88 21.8781 232.88 24.4741V25.5027H215.549V24.6918C215.549 21.9924 216.312 19.8917 217.843 18.4005V18.395Z" fill="white"/>
+        <path d="M150.671 5.91036L136.154 41.7045H141.72L155.431 7.89137L150.671 5.91036Z" fill="#E22027"/>
+        <path d="M157.633 13.3881L155.833 0L145.287 8.27233L157.633 13.3881Z" fill="#E22027"/>
+      </svg>
+      <div>
+        <span class="login-client-badge">🏭 Rustic Bakery · Line Lead Training</span>
+      </div>
+    </div>
+
+    <div class="login-card">
+      <div class="login-heading">Welcome, Line Lead</div>
+      <div class="login-sub">Enter your information to begin training. Your progress will be tracked and reported to your site manager.</div>
+
+      <div class="status-msg error" id="login-error">Please fill in all fields to continue.</div>
+
+      <div class="form-group">
+        <label class="form-label" for="input-name">Full Name</label>
+        <input class="form-input" type="text" id="input-name" placeholder="e.g. Maria Hernandez" autocomplete="name" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="input-title">Job Title</label>
+        <input class="form-input" type="text" id="input-title" placeholder="e.g. Line Lead" autocomplete="organization-title" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="input-shift">Shift</label>
+        <select class="form-select" id="input-shift">
+          <option value="">Select your shift…</option>
+          <option value="1st Shift">1st Shift</option>
+          <option value="2nd Shift">2nd Shift</option>
+          <option value="3rd Shift">3rd Shift</option>
+        </select>
+      </div>
+
+      <button class="login-btn" onclick="startTraining()">Begin Training →</button>
+    </div>
+
+    <div class="login-footer">
+      © 2026 Synovate · Synergetics Installations Worldwide, Inc.<br>
+      Questions? Contact <a href="mailto:rosatot@synergeticsww.com" style="color:var(--accent);text-decoration:none;">rosatot@synergeticsww.com</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 2 — TRAINING PLATFORM
+════════════════════════════════════════ -->
+<div id="screen-training" class="screen">
+
+  <!-- HEADER -->
+  <div class="training-header">
+    <div class="header-left">
+      <div class="header-logo">
+        <svg viewBox="0 0 238 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M136.305 41.7045L139.136 35.0921L128.542 12.5609H123.132L136.155 41.7045H136.305Z" fill="white"/>
+          <path d="M21.651 27.4184C20.5121 26.8252 19.271 26.3626 17.9172 26.0415C16.5633 25.715 15.2041 25.432 13.8395 25.1762C12.4695 24.9258 11.2177 24.6374 10.0787 24.3108C8.93977 23.9843 8.02645 23.4999 7.33341 22.8523C6.64036 22.2047 6.29115 21.323 6.29115 20.2073C6.29115 18.7651 6.87675 17.6494 8.04795 16.8603C9.21914 16.0712 10.89 15.6739 13.0604 15.6739C15.2309 15.6739 16.7728 16.1038 17.9118 16.9692C19.0507 17.8345 19.6901 19.1134 19.8298 20.806L25.3741 20.5339C25.127 18.6617 24.493 17.1052 23.483 15.8589C22.4676 14.6181 21.0815 13.682 19.3247 13.0507C17.5626 12.4194 15.4404 12.1037 12.953 12.1037C8.90217 12.1037 5.82375 12.8058 3.72849 14.2099C1.62786 15.614 0.580226 17.6658 0.580226 20.3706C0.580226 22.1013 0.929436 23.4945 1.62248 24.5558C2.31553 25.617 3.22885 26.4442 4.36781 27.0429C5.50677 27.6361 6.74781 28.0987 8.10167 28.4198C9.45553 28.7409 10.8148 29.0239 12.1794 29.2579C13.5493 29.4919 14.7904 29.7804 15.9132 30.1232C17.0307 30.4661 17.9386 30.945 18.6317 31.5546C19.3247 32.1696 19.6739 33.0512 19.6739 34.1995C19.6739 35.571 19.0883 36.6323 17.9172 37.3887C16.746 38.1452 15.0698 38.5262 12.9046 38.5262C10.5945 38.5262 8.84307 38.069 7.65038 37.1493C6.4577 36.2295 5.75928 34.82 5.54438 32.9097L0 33.1274C0.462032 36.2241 1.74068 38.5044 3.84131 39.963C5.93657 41.4215 8.97738 42.1508 12.9584 42.1508C16.9394 42.1508 20.1467 41.465 22.2635 40.099C24.3802 38.733 25.4386 36.7139 25.4386 34.0472C25.4386 32.3165 25.0894 30.9342 24.3963 29.8892C23.7033 28.8443 22.7846 28.028 21.651 27.4293V27.4184Z" fill="white"/>
+          <path d="M42.0556 36.1969H41.8944L32.8311 12.5337H27.3888L39.0417 42.4828L35.7107 51H41.6903L55.9219 12.5337H50.5334L42.0556 36.1969Z" fill="white"/>
+          <path d="M150.671 5.91036L136.154 41.7045H141.72L155.431 7.89137L150.671 5.91036Z" fill="#E22027"/>
+          <path d="M157.633 13.3881L155.833 0L145.287 8.27233L157.633 13.3881Z" fill="#E22027"/>
+        </svg>
+      </div>
+      <div class="header-divider"></div>
+      <div class="header-client">Rustic Bakery · Line Lead Training</div>
+    </div>
+
+    <div class="header-right">
+      <div class="progress-bar-wrap">
+        <div class="progress-label">
+          <span>Training Progress</span>
+          <span id="header-progress-pct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="header-progress-bar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="user-chip">
+        <div class="user-avatar" id="user-avatar-init">?</div>
+        <div>
+          <div class="user-name" id="header-user-name">—</div>
+          <div class="user-shift" id="header-user-shift">—</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="training-body">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-heading">Training Modules</div>
+      <div id="sidebar-modules"></div>
+      <div class="sidebar-completion" id="sidebar-completion">
+        <div class="completion-label">✓ Training Complete</div>
+        <div class="completion-sub">All modules finished. Your completion has been recorded.</div>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-content" id="main-content">
+      <!-- Injected by JS -->
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 3 — COMPLETION
+════════════════════════════════════════ -->
+<div id="screen-complete" class="screen">
+  <div>
+    <div class="complete-icon">✓</div>
+    <div class="complete-title">Training Complete</div>
+    <div class="complete-sub" id="complete-sub">You've completed all five Synovate training modules. Your results have been recorded.</div>
+
+    <div class="completion-card">
+      <div class="completion-row">
+        <span class="completion-row-label">Name</span>
+        <span class="completion-row-value" id="summary-name">—</span>
+      </div>
+      <div class="completion-row">
+        <span class="completion-row-label">Title</span>
+        <span class="completion-row-value" id="summary-title">—</span>
+      </div>
+      <div class="completion-row">
+        <span class="completion-row-label">Shift</span>
+        <span class="completion-row-value" id="summary-shift">—</span>
+      </div>
+      <div class="completion-row">
+        <span class="completion-row-label">Modules Completed</span>
+        <span class="completion-row-value green" id="summary-modules">5 / 5</span>
+      </div>
+      <div class="completion-row">
+        <span class="completion-row-label">Date</span>
+        <span class="completion-row-value" id="summary-date">—</span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);text-align:center;">Return to the floor. See your supervisor if you have questions.</p>
+  </div>
+</div>
+
+<!-- ADMIN FAB -->
+<button class="admin-fab" id="admin-fab" onclick="openAdmin()">⚙ Admin View</button>
+
+<!-- ADMIN OVERLAY -->
+<div class="admin-overlay" id="admin-overlay">
+  <div class="admin-panel">
+    <div class="admin-panel-header">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.3rem;">Synovate Client Services</div>
+        <div class="admin-panel-title">Rustic Bakery — Training Completions</div>
+      </div>
+      <button class="admin-close-btn" onclick="closeAdmin()">✕ Close</button>
+    </div>
+
+    <div class="admin-stats-row">
+      <div class="admin-stat">
+        <div class="admin-stat-num red" id="stat-total">0</div>
+        <div class="admin-stat-lbl">Total Trainees</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-num green" id="stat-complete">0</div>
+        <div class="admin-stat-lbl">Fully Complete</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-num yellow" id="stat-partial">0</div>
+        <div class="admin-stat-lbl">In Progress</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-num" id="stat-pct" style="color:var(--text);">0%</div>
+        <div class="admin-stat-lbl">Completion Rate</div>
+      </div>
+    </div>
+
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Title</th>
+          <th>Shift</th>
+          <th>Modules Done</th>
+          <th>Progress</th>
+          <th>Login Time</th>
+        </tr>
+      </thead>
+      <tbody id="admin-tbody"></tbody>
+    </table>
+
+    <div style="display:flex;gap:.75rem;margin-top:1.25rem;flex-wrap:wrap;">
+      <button class="admin-export-btn" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="admin-export-btn" onclick="clearAdminData()" style="color:rgba(226,32,39,0.6);border-color:rgba(226,32,39,0.2);">✕ Clear All Records</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// DATA — Module Definitions
+// ══════════════════════════════════════════════════════
+var MODULES = [
+  {
+    id: 1,
+    title: 'Starting a Production Run',
+    desc: 'Learn how to initiate a Production Run in Synovate — from selecting the correct Manufacturing Order to confirming line configuration and crew count before starting.',
+    duration: '~8 min',
+    videoReady: true,
+    videoSrc: 'https://drive.google.com/file/d/1eLbru4v_5TGzdzq1UmrVSdFhYSCLBuaD/preview',
+    keyPoints: [
+      'Navigate to Production Run Control from the main dashboard',
+      'Select the correct Manufacturing Order (MO) for your line',
+      'Verify and select all sublines with active sensors before starting',
+      'Enter your starting crew count accurately — this drives efficiency calculations',
+      'Confirm line speed setting matches the MO specification'
+    ]
+  },
+  {
+    id: 2,
+    title: 'Recording Downtime',
+    desc: 'Every minute of unplanned downtime must be captured with a reason code. This module covers how to log downtime events in Synovate during and after they occur.',
+    duration: '~6 min',
+    videoReady: true,
+    videoSrc: 'https://drive.google.com/file/d/16EVPlsVAe59c9poI5QfLyodJF8kNYPEw/preview',
+    keyPoints: [
+      'Downtime events appear automatically when the line stops — a reason code is still required',
+      'Enter the reason code within 15 minutes of the event occurring',
+      'Automated (A-type) events still require a manual reason entry to be valid for CI analysis',
+      'Unrecorded downtime cannot be used in root cause analysis or performance reporting',
+      'At shift end, review your downtime log and back-fill any missing reasons before handover'
+    ]
+  },
+  {
+    id: 3,
+    title: 'Shift Transition',
+    desc: 'A clean shift handover keeps production data accurate and the oncoming lead informed. This module walks through ending your shift and transitioning the run in Synovate.',
+    duration: '~7 min',
+    videoReady: false,
+    videoSrc: '',
+    keyPoints: [
+      'Review and close all open downtime events before ending your shift',
+      'Update the crew count to reflect actual headcount at shift close',
+      'Use the shift notes field to flag any open issues for the oncoming lead',
+      'Do not end the production run unless the line is physically stopping — a shift transition is not a run close',
+      'Confirm handover with the incoming lead verbally and in Synovate'
+    ]
+  },
+  {
+    id: 4,
+    title: 'Product Changeover',
+    desc: 'Changing products mid-shift requires specific steps in Synovate to ensure the new run is tracked accurately and separately from the prior run.',
+    duration: '~9 min',
+    videoReady: false,
+    videoSrc: '',
+    keyPoints: [
+      'Close the current production run before beginning changeover activities',
+      'Do not start the new MO until the line is physically ready to run',
+      'Changeover time between runs should be recorded as planned downtime under the outgoing run',
+      'Select the correct sublines for the new product — configurations differ by SKU',
+      'Verify the new MO quantity and order type before confirming the run start'
+    ]
+  },
+  {
+    id: 5,
+    title: 'Creating a Work Order',
+    desc: 'Learn how to create and configure a new Manufacturing Order (MO) in Synovate when one is missing or needs to be generated at the line level.',
+    duration: '~7 min',
+    videoReady: true,
+    videoSrc: 'https://drive.google.com/file/d/1YVC_klvgFTT70_wpIlNZq0gxoBakDofW/preview',
+    keyPoints: [
+      'Work orders should only be created at the line level if authorized by your supervisor',
+      'Enter the correct SKU — mismatches between the MO and the physical product create reporting errors',
+      'Set the correct order quantity in the right unit of measure (cases vs. units)',
+      'Assign the work order to the correct production line before saving',
+      'Once created, verify the MO appears in the Production Run Control queue before starting'
+    ]
+  }
+];
+
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+var state = {
+  user: null,
+  currentModule: 0,
+  completed: [],
+  loginTime: null
+};
+
+// Persist to localStorage (per-session convenience)
+var STORAGE_KEY = 'rb_training_sessions';
+
+function getSessions() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+function saveSessions(sessions) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions)); }
+  catch(e) {}
+}
+function upsertSession() {
+  var sessions = getSessions();
+  var key = state.user.name + '|' + state.user.shift;
+  var idx = sessions.findIndex(function(s){ return s.key === key; });
+  var record = {
+    key: key,
+    name: state.user.name,
+    title: state.user.title,
+    shift: state.user.shift,
+    loginTime: state.loginTime,
+    completed: state.completed.slice(),
+    lastUpdated: new Date().toISOString()
+  };
+  if(idx >= 0) sessions[idx] = record;
+  else sessions.push(record);
+  saveSessions(sessions);
+}
+
+// ══════════════════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════════════════
+function startTraining() {
+  var name = document.getElementById('input-name').value.trim();
+  var title = document.getElementById('input-title').value.trim();
+  var shift = document.getElementById('input-shift').value;
+  var err = document.getElementById('login-error');
+
+  if(!name || !title || !shift) {
+    err.classList.add('show');
+    return;
+  }
+  err.classList.remove('show');
+
+  state.user = { name: name, title: title, shift: shift };
+  state.loginTime = new Date().toISOString();
+  state.currentModule = 0;
+  state.completed = [];
+
+  upsertSession();
+  showScreen('screen-training');
+  renderHeader();
+  renderSidebar();
+  loadModule(0);
+  document.getElementById('admin-fab').classList.add('show');
+}
+
+function logout() {
+  if(state.completed.length > 0 && state.completed.length < MODULES.length) {
+    if(!confirm('Your progress will be saved. Sign out?')) return;
+  }
+  state = { user: null, currentModule: 0, completed: [], loginTime: null };
+  document.getElementById('input-name').value = '';
+  document.getElementById('input-title').value = '';
+  document.getElementById('input-shift').value = '';
+  document.getElementById('admin-fab').classList.remove('show');
+  showScreen('screen-login');
+}
+
+// ══════════════════════════════════════════════════════
+// SCREEN CONTROL
+// ══════════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════
+// HEADER
+// ══════════════════════════════════════════════════════
+function renderHeader() {
+  var u = state.user;
+  document.getElementById('header-user-name').textContent = u.name;
+  document.getElementById('header-user-shift').textContent = u.shift;
+  document.getElementById('user-avatar-init').textContent = u.name.charAt(0).toUpperCase();
+  updateProgress();
+}
+
+function updateProgress() {
+  var pct = Math.round((state.completed.length / MODULES.length) * 100);
+  document.getElementById('header-progress-pct').textContent = pct + '%';
+  document.getElementById('header-progress-bar').style.width = pct + '%';
+}
+
+// ══════════════════════════════════════════════════════
+// SIDEBAR
+// ══════════════════════════════════════════════════════
+function renderSidebar() {
+  var html = '';
+  MODULES.forEach(function(m, i) {
+    var isDone = state.completed.indexOf(i) >= 0;
+    var isActive = state.currentModule === i;
+    var statusClass = isDone ? 'done' : (isActive ? 'active-status' : '');
+    var statusIcon = isDone ? '✓' : (i + 1);
+    html += '<div class="module-item' + (isActive ? ' active' : '') + '" onclick="loadModule(' + i + ')">';
+    html += '<div class="module-status ' + statusClass + '">' + statusIcon + '</div>';
+    html += '<div class="module-info">';
+    html += '<div class="module-num">Module ' + (i + 1) + '</div>';
+    html += '<div class="module-title">' + m.title + '</div>';
+    html += '</div></div>';
+  });
+  document.getElementById('sidebar-modules').innerHTML = html;
+
+  var allDone = state.completed.length === MODULES.length;
+  document.getElementById('sidebar-completion').classList.toggle('show', allDone);
+}
+
+// ══════════════════════════════════════════════════════
+// MODULE CONTENT
+// ══════════════════════════════════════════════════════
+function loadModule(index) {
+  state.currentModule = index;
+  var m = MODULES[index];
+  var isDone = state.completed.indexOf(index) >= 0;
+  var isLast = index === MODULES.length - 1;
+
+  // Video section
+  var videoHtml;
+  if(m.videoReady && m.videoSrc) {
+    videoHtml = '<div class="video-placeholder has-video"><iframe src="' + m.videoSrc + '" width="100%" height="100%" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allow="autoplay" allowfullscreen></iframe></div>';
+  } else if(m.videoReady && !m.videoSrc) {
+    videoHtml = '<div class="video-placeholder">'
+      + '<div class="play-ring"><div class="play-icon"></div></div>'
+      + '<div class="video-placeholder-label">Video — Module ' + (index+1) + '</div>'
+      + '</div>';
+  } else {
+    videoHtml = '<div class="video-placeholder">'
+      + '<div class="play-ring" style="opacity:.4"><div class="play-icon" style="border-left-color:var(--muted)"></div></div>'
+      + '<div class="video-placeholder-label" style="color:var(--muted);">Video coming soon</div>'
+      + '<div class="video-coming-badge">⏳ In Production</div>'
+      + '</div>';
+  }
+
+  // Key points
+  var pointsHtml = m.keyPoints.map(function(p){
+    return '<div class="key-point"><div class="key-point-dot"></div><span>' + p + '</span></div>';
+  }).join('');
+
+  // Buttons
+  var btnHtml;
+  if(isDone) {
+    btnHtml = '<button class="complete-btn done">✓ Module Complete</button>';
+    if(!isLast) {
+      btnHtml += '<button class="next-module-btn" onclick="loadModule(' + (index+1) + ')">Next Module →</button>';
+    }
+  } else {
+    btnHtml = '<button class="complete-btn" id="mark-complete-btn" onclick="markComplete(' + index + ')">Mark as Complete →</button>';
+  }
+
+  var html = '<div class="module-eyebrow">Module ' + (index+1) + ' of ' + MODULES.length + '</div>'
+    + '<div class="module-main-title">' + m.title + '</div>'
+    + '<div class="module-desc">' + m.desc + '</div>'
+    + '<div class="video-card">'
+    + videoHtml
+    + '<div class="video-meta">'
+    + '<div><div class="video-meta-title">' + m.title + '</div><div class="video-meta-info">Synovate Platform Training · ' + m.duration + '</div></div>'
+    + '<div class="video-status-badge ' + (m.videoReady ? 'complete' : 'pending') + '">' + (m.videoReady ? '● Ready' : '● Coming Soon') + '</div>'
+    + '</div></div>'
+    + '<div class="key-points"><div class="key-points-title">What You\'ll Learn</div>' + pointsHtml + '</div>'
+    + btnHtml;
+
+  document.getElementById('main-content').innerHTML = html;
+  renderSidebar();
+  updateProgress();
+  window.scrollTo(0, 0);
+}
+
+function markComplete(index) {
+  if(state.completed.indexOf(index) < 0) {
+    state.completed.push(index);
+  }
+  upsertSession();
+
+  if(state.completed.length === MODULES.length) {
+    // All done
+    showCompletionScreen();
+    return;
+  }
+
+  // Auto-advance to next incomplete module
+  var next = index + 1;
+  while(next < MODULES.length && state.completed.indexOf(next) >= 0) next++;
+  if(next < MODULES.length) {
+    loadModule(next);
+  } else {
+    loadModule(index); // reload to show done state
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// COMPLETION SCREEN
+// ══════════════════════════════════════════════════════
+function showCompletionScreen() {
+  document.getElementById('summary-name').textContent = state.user.name;
+  document.getElementById('summary-title').textContent = state.user.title;
+  document.getElementById('summary-shift').textContent = state.user.shift;
+  document.getElementById('summary-modules').textContent = MODULES.length + ' / ' + MODULES.length;
+  document.getElementById('summary-date').textContent = new Date().toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+  showScreen('screen-complete');
+}
+
+// ══════════════════════════════════════════════════════
+// ADMIN PANEL
+// ══════════════════════════════════════════════════════
+function openAdmin() {
+  var sessions = getSessions();
+  var total = sessions.length;
+  var complete = sessions.filter(function(s){ return s.completed.length === MODULES.length; }).length;
+  var partial = total - complete;
+  var pct = total > 0 ? Math.round((complete / total) * 100) : 0;
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-complete').textContent = complete;
+  document.getElementById('stat-partial').textContent = partial;
+  document.getElementById('stat-pct').textContent = pct + '%';
+
+  var tbody = '';
+  if(sessions.length === 0) {
+    tbody = '<tr><td colspan="6" style="color:var(--muted);padding:1.5rem .75rem;font-size:13px;">No trainees have logged in yet.</td></tr>';
+  } else {
+    sessions.forEach(function(s) {
+      var done = s.completed.length;
+      var total5 = MODULES.length;
+      var pctFill = Math.round((done / total5) * 100);
+      var fillClass = done === total5 ? 'complete' : '';
+      var loginStr = s.loginTime ? new Date(s.loginTime).toLocaleString('en-US', {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '—';
+      tbody += '<tr>'
+        + '<td style="font-weight:600;">' + escHtml(s.name) + '</td>'
+        + '<td style="color:var(--muted);">' + escHtml(s.title) + '</td>'
+        + '<td>' + escHtml(s.shift) + '</td>'
+        + '<td style="font-weight:600;">' + done + ' / ' + total5 + '</td>'
+        + '<td><div class="progress-pill"><div class="pill-bar"><div class="pill-fill ' + fillClass + '" style="width:' + pctFill + '%"></div></div>' + pctFill + '%</div></td>'
+        + '<td style="color:var(--muted);">' + loginStr + '</td>'
+        + '</tr>';
+    });
+  }
+  document.getElementById('admin-tbody').innerHTML = tbody;
+  document.getElementById('admin-overlay').classList.add('open');
+}
+
+function closeAdmin() {
+  document.getElementById('admin-overlay').classList.remove('open');
+}
+
+function exportCSV() {
+  var sessions = getSessions();
+  if(sessions.length === 0) { alert('No records to export.'); return; }
+  var rows = [['Name','Title','Shift','Modules Completed','Total Modules','Percent','Login Time']];
+  sessions.forEach(function(s){
+    var loginStr = s.loginTime ? new Date(s.loginTime).toLocaleString() : '';
+    rows.push([s.name, s.title, s.shift, s.completed.length, MODULES.length, Math.round((s.completed.length/MODULES.length)*100)+'%', loginStr]);
+  });
+  var csv = rows.map(function(r){ return r.map(function(v){ return '"'+String(v).replace(/"/g,'""')+'"'; }).join(','); }).join('\n');
+  var blob = new Blob([csv], {type:'text/csv'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'RusticBakery_TrainingCompletions_' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function clearAdminData() {
+  if(!confirm('Delete all training records? This cannot be undone.')) return;
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  closeAdmin();
+  openAdmin();
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Keyboard shortcut: Ctrl+Shift+A to open admin from any screen
+document.addEventListener('keydown', function(e){
+  if(e.ctrlKey && e.shiftKey && e.key === 'A') { openAdmin(); }
+});
+</script>
+</body>
+</html>
