@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rustic Bakery · Video Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #060c14;
+    --bg-card: #0b1525;
+    --bg-elevated: #0f1d30;
+    --bg-hover: #142238;
+    --accent: #E22027;
+    --accent-dim: rgba(226,32,39,0.15);
+    --text-primary: #f0f4f8;
+    --text-secondary: #8aa0b8;
+    --text-dim: #4a6480;
+    --border: rgba(255,255,255,0.07);
+    --border-active: rgba(226,32,39,0.5);
+    --green: #2ecc71;
+    --green-dim: rgba(46,204,113,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .synovate-logo svg { height: 24px; }
+  .header-divider {
+    width: 1px;
+    height: 28px;
+    background: var(--border);
+  }
+  .header-client {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .85rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .header-client img {
+    height: 28px;
+    filter: invert(1);
+    opacity: 0.85;
+  }
+  .lang-toggle {
+    display: flex;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .lang-btn {
+    padding: .3rem .75rem;
+    font-size: .75rem;
+    font-weight: 600;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: .08em;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .lang-btn.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* ── HERO BANNER ── */
+  .hero {
+    background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-card) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .hero-text h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    margin-bottom: .25rem;
+  }
+  .hero-text p {
+    font-size: .9rem;
+    color: var(--text-secondary);
+    max-width: 480px;
+    line-height: 1.5;
+  }
+  .hero-badge {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    background: var(--accent-dim);
+    border: 1px solid var(--border-active);
+    border-radius: 8px;
+    padding: .5rem 1rem;
+    font-size: .8rem;
+    font-weight: 600;
+    color: #ff6b6b;
+    white-space: nowrap;
+  }
+  .hero-badge span { font-size: 1rem; }
+
+  /* ── LAYOUT ── */
+  .main {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: calc(100vh - 120px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    background: var(--bg-card);
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 0;
+  }
+  .sidebar-section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 0 1.25rem .75rem;
+  }
+  .module-item {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .75rem 1.25rem;
+    cursor: pointer;
+    transition: background .15s;
+    border-left: 3px solid transparent;
+  }
+  .module-item:hover { background: var(--bg-hover); }
+  .module-item.active {
+    background: var(--bg-elevated);
+    border-left-color: var(--accent);
+  }
+  .module-item.coming-soon { opacity: .5; cursor: default; }
+  .module-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+  .module-item.active .module-num {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .module-info { flex: 1; min-width: 0; }
+  .module-label {
+    font-size: .7rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+  .module-title {
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .module-item.coming-soon .module-title { color: var(--text-dim); }
+  .badge-coming {
+    font-size: .6rem;
+    font-weight: 700;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: .1rem .35rem;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  /* ── VIDEO AREA ── */
+  .content {
+    padding: 2rem 2.5rem;
+    max-width: 900px;
+  }
+  .video-header {
+    margin-bottom: 1.25rem;
+  }
+  .video-module-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: .3rem;
+  }
+  .video-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    margin-bottom: .4rem;
+  }
+  .video-desc {
+    font-size: .9rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+  }
+  .video-wrapper iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: none;
+  }
+  .video-coming {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-elevated);
+    gap: .75rem;
+  }
+  .video-coming-icon { font-size: 2.5rem; opacity: .4; }
+  .video-coming-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* ── KEY POINTS ── */
+  .key-points-heading {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: .75rem;
+  }
+  .key-points {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: .6rem;
+    margin-bottom: 2rem;
+  }
+  .key-point {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: .65rem .9rem;
+    font-size: .83rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: flex-start;
+    gap: .5rem;
+    line-height: 1.4;
+  }
+  .key-point::before {
+    content: '›';
+    color: var(--accent);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: .05rem;
+  }
+
+  /* ── NAV BUTTONS ── */
+  .nav-buttons {
+    display: flex;
+    gap: .75rem;
+    padding-top: .5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .6rem 1.25rem;
+    border-radius: 7px;
+    font-size: .85rem;
+    font-weight: 600;
+    font-family: 'Barlow', sans-serif;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+    transition: all .2s;
+  }
+  .nav-btn:hover:not(:disabled) {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border-color: rgba(255,255,255,0.15);
+  }
+  .nav-btn:disabled { opacity: .3; cursor: default; }
+  .nav-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .nav-btn.primary:hover:not(:disabled) {
+    background: #c81a20;
+    border-color: #c81a20;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding: 1.25rem;
+    font-size: .75rem;
+    color: var(--text-dim);
+    border-top: 1px solid var(--border);
+  }
+  .footer a { color: var(--text-dim); text-decoration: none; }
+  .footer a:hover { color: var(--text-secondary); }
+
+  @media (max-width: 700px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar { border-right: none; border-bottom: 1px solid var(--border); padding: 1rem 0; }
+    .content { padding: 1.25rem; }
+    .hero { padding: 1.25rem; }
+    .header { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="synovate-logo">
+      <svg viewBox="0 0 238 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M136.305 41.7045L139.136 35.0921L128.542 12.5609H123.132L136.155 41.7045H136.305Z" fill="white"/>
+        <path d="M21.651 27.4184C20.5121 26.8252 19.271 26.3626 17.9172 26.0415C16.5633 25.715 15.2041 25.432 13.8395 25.1762C12.4695 24.9258 11.2177 24.6374 10.0787 24.3108C8.93977 23.9843 8.02645 23.4999 7.33341 22.8523C6.64036 22.2047 6.29115 21.323 6.29115 20.2073C6.29115 18.7651 6.87675 17.6494 8.04795 16.8603C9.21914 16.0712 10.89 15.6739 13.0604 15.6739C15.2309 15.6739 16.7728 16.1038 17.9118 16.9692C19.0507 17.8345 19.6901 19.1134 19.8298 20.806L25.3741 20.5339C25.127 18.6617 24.493 17.1052 23.483 15.8589C22.4676 14.6181 21.0815 13.682 19.3247 13.0507C17.5626 12.4194 15.4404 12.1037 12.953 12.1037C8.90217 12.1037 5.82375 12.8058 3.72849 14.2099C1.62786 15.614 0.580226 17.6658 0.580226 20.3706C0.580226 22.1013 0.929436 23.4945 1.62248 24.5558C2.31553 25.617 3.22885 26.4442 4.36781 27.0429C5.50677 27.6361 6.74781 28.0987 8.10167 28.4198C9.45553 28.7409 10.8148 29.0239 12.1794 29.2579C13.5493 29.4919 14.7904 29.7804 15.9132 30.1232C17.0307 30.4661 17.9386 30.945 18.6317 31.5546C19.3247 32.1696 19.6739 33.0512 19.6739 34.1995C19.6739 35.571 19.0883 36.6323 17.9172 37.3887C16.746 38.1452 15.0698 38.5262 12.9046 38.5262C10.5945 38.5262 8.84307 38.069 7.65038 37.1493C6.4577 36.2295 5.75928 34.82 5.54438 32.9097L0 33.1274C0.462032 36.2241 1.74068 38.5044 3.84131 39.963C5.93657 41.4215 8.97738 42.1508 12.9584 42.1508C16.9394 42.1508 20.1467 41.465 22.2635 40.099C24.3802 38.733 25.4386 36.7139 25.4386 34.0472C25.4386 32.3165 25.0894 30.9342 24.3963 29.8892C23.7033 28.8443 22.7846 28.028 21.651 27.4293V27.4184Z" fill="white"/>
+        <path d="M42.0556 36.1969H41.8944L32.8311 12.5337H27.3888L39.0417 42.4828L35.7107 51H41.6903L55.9219 12.5337H50.5334L42.0556 36.1969Z" fill="white"/>
+        <path d="M76.8426 12.1037C72.6091 12.1037 69.348 13.497 67.0593 16.2889C66.3931 17.0998 65.8236 18.0195 65.3509 19.0372L64.3677 12.5391H60.4189V41.71H65.8075V27.9899C65.8075 24.2074 66.5865 21.3176 68.1553 19.3202C69.7187 17.3229 71.9429 16.3215 74.8225 16.3215C77.3476 16.3215 79.1957 17.0127 80.3669 18.4005C81.5381 19.7883 82.1237 21.9761 82.1237 24.9639V41.71H87.5123V24.3707C87.5123 20.191 86.6473 17.1052 84.9281 15.1079C83.2036 13.1106 80.5119 12.1092 76.8479 12.1092L76.8426 12.1037Z" fill="white"/>
+        <path d="M120.069 17.9923C118.93 16.0821 117.276 14.6235 115.111 13.6167C112.94 12.6099 110.367 12.1037 107.38 12.1037C104.393 12.1037 101.878 12.6153 99.7293 13.6439C97.5803 14.6725 95.9148 16.131 94.7436 18.0195C93.5724 19.908 92.9814 22.172 92.9814 24.8007V29.4484C92.9814 32.077 93.5563 34.3465 94.7167 36.2567C95.8718 38.167 97.5265 39.6255 99.6755 40.6324C101.825 41.6392 104.393 42.1453 107.38 42.1453C110.367 42.1453 112.945 41.6392 115.111 40.6324C117.281 39.6255 118.93 38.167 120.069 36.2567C121.208 34.3465 121.778 32.077 121.778 29.4484V24.8007C121.778 22.172 121.208 19.9026 120.069 17.9923ZM116.389 29.3341C116.389 31.9628 115.578 34.0417 113.961 35.571C112.344 37.1003 110.146 37.8677 107.374 37.8677C104.602 37.8677 102.458 37.0949 100.841 35.5438C99.2242 33.9982 98.413 31.9247 98.413 29.3341V24.9041C98.413 22.3135 99.2189 20.24 100.841 18.6889C102.458 17.1433 104.634 16.3651 107.374 16.3651C110.114 16.3651 112.344 17.1324 113.961 18.6617C115.578 20.191 116.389 22.2754 116.389 24.8986V29.3287V29.3341Z" fill="white"/>
+        <path d="M180.992 14.7759C178.967 12.9908 175.889 12.1037 171.768 12.1037C170.452 12.1037 169.049 12.2289 167.556 12.4792C166.062 12.7296 164.639 13.0833 163.29 13.5351C161.936 13.9868 160.749 14.4983 159.717 15.0752L160.518 19.0753C162.012 18.1774 163.618 17.4807 165.342 16.9964C167.067 16.512 168.781 16.2671 170.489 16.2671C173.261 16.2671 175.298 16.8004 176.598 17.8617C177.893 18.923 178.543 20.5883 178.543 22.8577V26.9449C178.269 26.6837 177.968 26.4388 177.635 26.2102C175.609 24.8061 172.853 24.104 169.366 24.104C165.88 24.104 163.489 24.8442 161.662 26.3191C159.83 27.7939 158.917 29.8511 158.917 32.4798V33.8295C158.917 36.4581 159.825 38.5044 161.635 39.963C163.451 41.4215 165.939 42.1508 169.103 42.1508C172.73 42.1508 175.566 41.4052 177.608 39.9085C178.387 39.3425 179.015 38.6895 179.494 37.9493L180.084 41.7154H184.033V22.8632C184.033 19.2604 183.023 16.5719 180.992 14.7868V14.7759ZM178.43 33.2798C178.43 34.9724 177.726 36.3329 176.324 37.3561C174.916 38.3847 173.025 38.8963 170.645 38.8963C168.544 38.8963 166.911 38.4173 165.74 37.4649C164.569 36.5125 163.983 35.152 163.983 33.3886V32.741C163.983 30.8307 164.585 29.443 165.794 28.5831C167.003 27.7177 168.69 27.2878 170.86 27.2878C173.24 27.2878 175.099 27.745 176.431 28.6647C177.764 29.5845 178.43 30.8688 178.43 32.5288V33.2852V33.2798Z" fill="white"/>
+        <path d="M204.862 37.6826C204.255 37.7752 203.67 37.8187 203.1 37.8187C201.467 37.8187 200.317 37.4486 199.662 36.7139C199.006 35.9738 198.673 34.6894 198.673 32.8499V16.5338H206.087V12.5337H198.673V5.51307H194.832L193.36 12.5337H188.009V16.5338H193.236V33.6063C193.236 36.5234 193.876 38.6786 195.154 40.0609C196.433 41.4487 198.442 42.1399 201.182 42.1399C201.891 42.1399 202.606 42.0964 203.315 42.0038C204.024 41.9113 204.728 41.7807 205.421 41.6011C206.114 41.4215 206.743 41.2256 207.312 41.0079L206.619 37.2255C206.05 37.4432 205.464 37.5956 204.862 37.6826Z" fill="white"/>
+        <path d="M238 28.6321V25.715C238 21.3557 236.808 17.9978 234.428 15.6412C232.048 13.2847 228.631 12.1037 224.188 12.1037C221.27 12.1037 218.767 12.6099 216.666 13.6167C214.566 14.6235 212.948 16.0766 211.815 17.9651C210.676 19.8536 210.106 22.1339 210.106 24.8007V29.4484C210.106 32.1478 210.638 34.4445 211.707 36.3384C212.777 38.2269 214.318 39.6691 216.349 40.6596C218.375 41.6501 220.808 42.1453 223.656 42.1453C227.422 42.1453 230.527 41.3562 232.961 39.767C235.395 38.1833 236.969 35.9302 237.683 33.0131L232.51 32.6322C232.155 34.4336 231.236 35.8268 229.764 36.8173C228.287 37.8078 226.358 38.3031 223.978 38.3031C221.313 38.3031 219.24 37.5901 217.768 36.1697C216.29 34.7492 215.554 32.7029 215.554 30.0362V28.6321H238.006H238ZM217.843 18.395C219.369 16.9038 221.523 16.1528 224.295 16.1528C227.067 16.1528 229.06 16.893 230.586 18.3678C232.112 19.8427 232.88 21.8781 232.88 24.4741V25.5027H215.549V24.6918C215.549 21.9924 216.312 19.8917 217.843 18.4005V18.395Z" fill="white"/>
+        <path d="M150.671 5.91036L136.154 41.7045H141.72L155.431 7.89137L150.671 5.91036Z" fill="#E22027"/>
+        <path d="M157.633 13.3881L155.833 0L145.287 8.27233L157.633 13.3881Z" fill="#E22027"/>
+      </svg>
+    </div>
+    <div class="header-divider"></div>
+    <div class="header-client">
+      <img src="data:image/png;base64,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" alt="Rustic Bakery">
+      <span id="header-title">Rustic Bakery · Quick Reference</span>
+    </div>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-text">
+    <h1 id="hero-title">Video Reference Library</h1>
+    <p id="hero-desc">Select any module to watch. Use this for quick refreshers on the floor — no login required.</p>
+  </div>
+  <div class="hero-badge">
+    <span>📱</span>
+    <span id="hero-badge-text">Scan & Go — No Login Needed</span>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section-label" id="sidebar-label">Training Modules</div>
+    <div id="sidebar-modules"></div>
+  </nav>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="video-header">
+      <div class="video-module-label" id="mod-label"></div>
+      <div class="video-title" id="mod-title"></div>
+      <div class="video-desc" id="mod-desc"></div>
+    </div>
+    <div class="video-wrapper" id="video-wrapper"></div>
+    <div class="key-points-heading" id="kp-heading">Key Points</div>
+    <div class="key-points" id="key-points"></div>
+    <div class="nav-buttons">
+      <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">← <span id="btn-prev-label">Previous</span></button>
+      <button class="nav-btn primary" id="btn-next" onclick="navigate(1)"><span id="btn-next-label">Next Module</span> →</button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  Powered by <strong>Synovate</strong> · <a href="mailto:rosatot@synergeticsww.com">rosatot@synergeticsww.com</a>
+</footer>
+
+<script>
+const MODULES = [
+  {
+    id: 1,
+    videoSrc: 'https://drive.google.com/file/d/1eLbru4v_5TGzdzq1UmrVSdFhYSCLBuaD/preview',
+    en: {
+      title: 'Starting a Production Run',
+      desc: 'Learn how to initiate a production run in LineBeat — from selecting your line to confirming crew and product details.',
+      keyPoints: ['Navigate to the Production Run screen', 'Select your line and product', 'Enter crew count and confirm details', 'Start the run timer and begin tracking']
+    },
+    es: {
+      title: 'Iniciar una Corrida de Producción',
+      desc: 'Aprende cómo iniciar una corrida de producción en LineBeat — desde seleccionar tu línea hasta confirmar el equipo y los detalles del producto.',
+      keyPoints: ['Navega a la pantalla de Corrida de Producción', 'Selecciona tu línea y producto', 'Ingresa el número de operadores y confirma los detalles', 'Inicia el temporizador y comienza el seguimiento']
+    }
+  },
+  {
+    id: 2,
+    videoSrc: 'https://drive.google.com/file/d/16EVPlsVAe59c9poI5QfLyodJF8kNYPEw/preview',
+    en: {
+      title: 'Recording Downtime',
+      desc: 'How to log downtime events during a production run — categorizing cause codes and capturing accurate time data.',
+      keyPoints: ['Tap the Downtime button during an active run', 'Select the correct cause category', 'Enter downtime duration or use the timer', 'Add notes for follow-up if needed']
+    },
+    es: {
+      title: 'Registrar Tiempo de Inactividad',
+      desc: 'Cómo registrar eventos de tiempo de inactividad durante una corrida — categorizando códigos de causa y capturando datos de tiempo precisos.',
+      keyPoints: ['Toca el botón de Inactividad durante una corrida activa', 'Selecciona la categoría de causa correcta', 'Ingresa la duración o usa el temporizador', 'Agrega notas para seguimiento si es necesario']
+    }
+  },
+  {
+    id: 3,
+    videoSrc: null,
+    en: {
+      title: 'Shift Transition',
+      desc: 'How to properly hand off a production run at shift change — closing out your data and setting up the incoming lead.',
+      keyPoints: ['Complete all open downtime entries', 'Record final crew count for the shift', 'Submit the shift summary', 'Hand off to the incoming line lead']
+    },
+    es: {
+      title: 'Transición de Turno',
+      desc: 'Cómo entregar correctamente una corrida de producción al cambio de turno — cerrando tus datos y preparando al líder entrante.',
+      keyPoints: ['Completa todas las entradas de inactividad abiertas', 'Registra el conteo final de operadores del turno', 'Envía el resumen del turno', 'Haz entrega al líder de línea entrante']
+    }
+  },
+  {
+    id: 4,
+    videoSrc: null,
+    en: {
+      title: 'Product Changeover',
+      desc: 'Step-by-step process for logging a product changeover mid-shift without ending the production run.',
+      keyPoints: ['Initiate a changeover from the active run screen', 'Log changeover start time', 'Select new product and confirm specs', 'Resume run tracking after changeover is complete']
+    },
+    es: {
+      title: 'Cambio de Producto',
+      desc: 'Proceso paso a paso para registrar un cambio de producto a mitad de turno sin finalizar la corrida de producción.',
+      keyPoints: ['Inicia el cambio desde la pantalla de corrida activa', 'Registra la hora de inicio del cambio', 'Selecciona el nuevo producto y confirma las especificaciones', 'Reanuda el seguimiento de la corrida al completar el cambio']
+    }
+  },
+  {
+    id: 5,
+    videoSrc: 'https://drive.google.com/file/d/1YVC_klvgFTT70_wpIlNZq0gxoBakDofW/preview',
+    en: {
+      title: 'Creating a Work Order',
+      desc: 'How to create and submit a work order in LineBeat for maintenance, materials, or other floor requests.',
+      keyPoints: ['Access Work Orders from the main menu', 'Select work order type and priority', 'Describe the issue and attach notes', 'Submit and confirm the work order number']
+    },
+    es: {
+      title: 'Crear una Orden de Trabajo',
+      desc: 'Cómo crear y enviar una orden de trabajo en LineBeat para mantenimiento, materiales u otras solicitudes del piso.',
+      keyPoints: ['Accede a Órdenes de Trabajo desde el menú principal', 'Selecciona el tipo de orden y la prioridad', 'Describe el problema y adjunta notas', 'Envía y confirma el número de orden de trabajo']
+    }
+  }
+];
+
+const UI = {
+  en: {
+    headerTitle: 'Rustic Bakery · Quick Reference',
+    heroTitle: 'Video Reference Library',
+    heroDesc: 'Select any module to watch. Use this for quick refreshers on the floor — no login required.',
+    heroBadge: 'Scan & Go — No Login Needed',
+    sidebarLabel: 'Training Modules',
+    kpHeading: 'Key Points',
+    prev: 'Previous',
+    next: 'Next Module',
+    comingSoon: 'In Production',
+    moduleLabel: m => `Module ${m}`
+  },
+  es: {
+    headerTitle: 'Rustic Bakery · Referencia Rápida',
+    heroTitle: 'Biblioteca de Videos de Referencia',
+    heroDesc: 'Selecciona cualquier módulo para ver. Úsalo para repasos rápidos en el piso — sin inicio de sesión.',
+    heroBadge: 'Escanea y listo — Sin Inicio de Sesión',
+    sidebarLabel: 'Módulos de Entrenamiento',
+    kpHeading: 'Puntos Clave',
+    prev: 'Anterior',
+    next: 'Siguiente Módulo',
+    comingSoon: 'En Producción',
+    moduleLabel: m => `Módulo ${m}`
+  }
+};
+
+let state = { lang: 'en', current: 0 };
+
+function setLang(lang) {
+  state.lang = lang;
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+  applyUI();
+  renderSidebar();
+  loadModule(state.current);
+}
+
+function applyUI() {
+  const u = UI[state.lang];
+  document.getElementById('header-title').textContent = u.headerTitle;
+  document.getElementById('hero-title').textContent = u.heroTitle;
+  document.getElementById('hero-desc').textContent = u.heroDesc;
+  document.getElementById('hero-badge-text').textContent = u.heroBadge;
+  document.getElementById('sidebar-label').textContent = u.sidebarLabel;
+  document.getElementById('kp-heading').textContent = u.kpHeading;
+  document.getElementById('btn-prev-label').textContent = u.prev;
+  document.getElementById('btn-next-label').textContent = u.next;
+}
+
+function renderSidebar() {
+  const u = UI[state.lang];
+  const container = document.getElementById('sidebar-modules');
+  container.innerHTML = MODULES.map((m, i) => {
+    const data = m[state.lang];
+    const isActive = i === state.current;
+    const isAvailable = !!m.videoSrc;
+    return `
+      <div class="module-item ${isActive ? 'active' : ''} ${!isAvailable ? 'coming-soon' : ''}"
+           onclick="${isAvailable ? `selectModule(${i})` : ''}">
+        <div class="module-num">${m.id}</div>
+        <div class="module-info">
+          <div class="module-label">${u.moduleLabel(m.id)}</div>
+          <div class="module-title">${data.title}</div>
+        </div>
+        ${!isAvailable ? `<span class="badge-coming">${u.comingSoon}</span>` : ''}
+      </div>`;
+  }).join('');
+}
+
+function loadModule(index) {
+  const m = MODULES[index];
+  const data = m[state.lang];
+  const u = UI[state.lang];
+
+  document.getElementById('mod-label').textContent = u.moduleLabel(m.id);
+  document.getElementById('mod-title').textContent = data.title;
+  document.getElementById('mod-desc').textContent = data.desc;
+
+  const wrapper = document.getElementById('video-wrapper');
+  if (m.videoSrc) {
+    wrapper.innerHTML = `<iframe src="${m.videoSrc}" allow="autoplay" allowfullscreen></iframe>`;
+  } else {
+    wrapper.innerHTML = `
+      <div class="video-coming">
+        <div class="video-coming-icon">🎬</div>
+        <div class="video-coming-text">${u.comingSoon}</div>
+      </div>`;
+  }
+
+  document.getElementById('key-points').innerHTML = data.keyPoints
+    .map(kp => `<div class="key-point">${kp}</div>`)
+    .join('');
+
+  document.getElementById('btn-prev').disabled = index === 0;
+  document.getElementById('btn-next').disabled = index === MODULES.length - 1;
+}
+
+function selectModule(index) {
+  state.current = index;
+  renderSidebar();
+  loadModule(index);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function navigate(dir) {
+  const next = state.current + dir;
+  if (next >= 0 && next < MODULES.length) selectModule(next);
+}
+
+// Init
+applyUI();
+renderSidebar();
+loadModule(0);
+</script>
+</body>
+</html>
